@@ -20,7 +20,7 @@ import colours from '../../providers/constants/colours';
 import {
   getDinnerRecipes,
   deleteRecipe,
-} from '../../providers/actions/Recipes';
+} from '../../providers/actions/Checkpoint';
 
 const styles = StyleSheet.create({
   divider: {

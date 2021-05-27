@@ -1,8 +1,10 @@
 import { combineReducers } from 'redux';
 import userReducer from './User';
-import recipeReducer from './Recipes';
+import checkpointReducer from './Checkpoint';
+import permissionsReducer from './Permissions';
 
 export default combineReducers({
   userReducer,
-  recipeReducer,
+  checkpointReducer,
+  permissionsReducer,
 });

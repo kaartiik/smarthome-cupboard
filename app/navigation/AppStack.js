@@ -9,6 +9,7 @@ import DinnerRecipes from '../screens/DinnerRecipes';
 import Recipe from '../screens/Recipe';
 import EditRecipe from '../screens/EditRecipe';
 import ImagePicker from '../screens/UploadRecipe/ImagePicker';
+import BarcodeScannerScreen from '../screens/Home/BarcodeScanner';
 
 const Stack = createStackNavigator();
 
@@ -22,6 +23,10 @@ export default function MainStack() {
   return (
     <Stack.Navigator initialRouteName="MyTabs" mode="modal" headerMode="none">
       <Stack.Screen name="MyTabs" component={BottomTabNavigator} />
+      <Stack.Screen
+        name="BarcodeScannerScreen"
+        component={BarcodeScannerScreen}
+      />
       <Stack.Screen name="BreakfastRecipes" component={BreakfastRecipes} />
       <Stack.Screen name="LunchRecipes" component={LunchRecipes} />
       <Stack.Screen name="DinnerRecipes" component={DinnerRecipes} />

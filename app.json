@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "Resipi Ibu",
-    "slug": "resipi-ibu",
+    "name": "Patrol Service",
+    "slug": "patrol-service",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/app_icon.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "cover",
@@ -17,23 +17,23 @@
       "**/*"
     ],
     "ios": {
-      "bundleIdentifier": "com.resipiibu",
+      "bundleIdentifier": "com.patrolservice",
       "buildNumber": "1.0.0",
       "supportsTablet": true,
       "requireFullScreen": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "Resipi Ibu needs to access the device's camera to capture pictures for the journal.",
-        "NSLocationWhenInUseUsageDescription": "Resipi Ibu needs to access the device's location to verify that the user is on-site.",
-        "NSFaceIDUsageDescription ": "Resipi Ibu need to use biometrics to unlock this app.",
-        "NSPhotoLibraryAddUsageDescription": "Give Resipi Ibu permission to save photos.",
-        "NSPhotoLibraryUsageDescription": "Give Resipi Ibu permission to access your photos."
+        "NSCameraUsageDescription": "Patrol Service needs to access the device's camera to capture pictures for the journal.",
+        "NSLocationWhenInUseUsageDescription": "Patrol Service needs to access the device's location to verify that the user is on-site.",
+        "NSFaceIDUsageDescription ": "Patrol Service need to use biometrics to unlock this app.",
+        "NSPhotoLibraryAddUsageDescription": "Give Patrol Service permission to save photos.",
+        "NSPhotoLibraryUsageDescription": "Give Patrol Service permission to access your photos."
       }
     },
     "android": {
-      "package": "com.resipiibu",
+      "package": "com.patrolservice",
       "versionCode": 1,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/app_icon.png",
         "backgroundColor": "#FFFFFF"
       },
       "permissions": [

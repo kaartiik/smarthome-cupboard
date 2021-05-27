@@ -4,10 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
 import colours from '../providers/constants/colours';
 import Home from '../screens/Home';
-import UploadRecipe from '../screens/UploadRecipe';
-import AllRecipes from '../screens/AllRecipes';
-import AllComments from '../screens/AllComments';
-import SubmitComments from '../screens/SubmitComments';
+import ClockInRecords from '../screens/ClockInRecords';
+import ScannerStack from './ScannerStack';
 
 // import { AuthContext } from './AuthProvider';
 
@@ -28,15 +26,16 @@ export default function BottomTabNavigator() {
 
           if (route.name === 'Home') {
             iconName = 'ios-home';
-          } else if (route.name === 'Upload') {
-            iconName = 'ios-add-circle';
-          } else if (route.name === 'Recipes') {
+          } else if (route.name === 'Records') {
             iconName = 'ios-list';
-          } else if (route.name === 'Comments') {
-            iconName = 'ios-mail';
-          } else if (route.name === 'Contact Us') {
-            iconName = 'ios-information';
           }
+          //else if (route.name === 'Recipes') {
+          //   iconName = 'ios-list';
+          // } else if (route.name === 'Comments') {
+          //   iconName = 'ios-mail';
+          // } else if (route.name === 'Contact Us') {
+          //   iconName = 'ios-information';
+          // }
 
           // You can return any component that you like here!
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -50,7 +49,8 @@ export default function BottomTabNavigator() {
       }}
     >
       <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Recipes" component={AllRecipes} />
+      <Tab.Screen name="Records" component={ClockInRecords} />
+      {/* <Tab.Screen name="Recipes" component={AllRecipes} />
       {isAdmin ? (
         <>
           <Tab.Screen name="Upload" component={UploadRecipe} />
@@ -58,7 +58,7 @@ export default function BottomTabNavigator() {
         </>
       ) : (
         <Tab.Screen name="Contact Us" component={SubmitComments} />
-      )}
+      )} */}
     </Tab.Navigator>
   );
 }

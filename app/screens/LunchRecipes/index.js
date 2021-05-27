@@ -17,7 +17,10 @@ import LoadingIndicator from '../../components/LoadingIndicator';
 
 import colours from '../../providers/constants/colours';
 
-import { getLunchRecipes, deleteRecipe } from '../../providers/actions/Recipes';
+import {
+  getLunchRecipes,
+  deleteRecipe,
+} from '../../providers/actions/Checkpoint';
 
 const styles = StyleSheet.create({
   divider: {

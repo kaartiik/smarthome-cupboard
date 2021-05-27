@@ -8,7 +8,7 @@ import * as Permissions from 'expo-permissions';
 import { ImageBrowser } from 'expo-image-picker-multiple';
 import LoadingIndicator from '../../components/LoadingIndicator';
 
-import { putRecipePhotos } from '../../providers/actions/Recipes';
+import { putRecipePhotos } from '../../providers/actions/Checkpoint';
 
 const styles = StyleSheet.create({
   flex: {

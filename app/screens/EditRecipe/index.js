@@ -24,7 +24,7 @@ import LoadingIndicator from '../../components/LoadingIndicator';
 import {
   uploadEditedRecipeWithImages,
   deleteEditedImage,
-} from '../../providers/actions/Recipes';
+} from '../../providers/actions/Checkpoint';
 import colours from '../../providers/constants/colours';
 
 const styles = StyleSheet.create({

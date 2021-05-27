@@ -1,5 +1,5 @@
 /* eslint-disable global-require */
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Alert,
   TouchableOpacity,
@@ -11,9 +11,13 @@ import {
   ScrollView,
   Platform,
   StyleSheet,
-  ImageBackground,
+  Button,
   Dimensions,
 } from 'react-native';
+import * as Permissions from 'expo-permissions';
+import * as Location from 'expo-location';
+import { BarCodeScanner } from 'expo-barcode-scanner';
+import { Barometer } from 'expo-sensors';
 import PropTypes from 'prop-types';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -23,7 +27,12 @@ import AppBar from '../../components/AppBar';
 import LoadingIndicator from '../../components/LoadingIndicator';
 import colours from '../../providers/constants/colours';
 
-import { getRecipes } from '../../providers/actions/Recipes';
+import { uploadClockin } from '../../providers/actions/Checkpoint';
+import { getPermissions } from '../../providers/actions/Permissions';
+
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -60,228 +69,82 @@ const styles = StyleSheet.create({
   },
 });
 
-const NavIcons = ({ navigation }) => (
-  <View style={styles.navContainer}>
-    <View style={{ flexDirection: 'row' }}>
-      <TouchableOpacity
-        onPress={() => navigation.navigate('BreakfastRecipes')}
-        style={{ marginRight: 20, alignItems: 'center' }}
-      >
-        <Image
-          source={require('../../../assets/breakfast.png')}
-          style={{ height: 80, width: 80 }}
-        />
-        <Text style={styles.iconTitle}>Breakfast</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={() => navigation.navigate('LunchRecipes')}
-        style={{ marginLeft: 20, alignItems: 'center' }}
-      >
-        <Image
-          source={require('../../../assets/lunch.png')}
-          style={{ height: 80, width: 80 }}
-        />
-        <Text style={styles.iconTitle}>Lunch</Text>
-      </TouchableOpacity>
-    </View>
-
-    <View style={{ flexDirection: 'row' }}>
-      <TouchableOpacity
-        onPress={() => navigation.navigate('DinnerRecipes')}
-        style={{ alignItems: 'center' }}
-      >
-        <Image
-          source={require('../../../assets/dinner.png')}
-          style={{ height: 80, width: 80 }}
-        />
-        <Text style={styles.iconTitle}>Dinner</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-);
-
-const RecipePreview = ({ feed, navigation }) => {
-  if (feed.length === 1) {
-    return (
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Recipe', { recipeItem: feed[0] })}
-      >
-        <ImageBackground
-          source={{ uri: feed[0].image.image_url }}
-          style={styles.previewBGImgFull}
-        >
-          <Text style={styles.recipePreviewText}>{feed[0].rTitle}</Text>
-          <Text style={styles.recipePreviewText}>{feed[0].rTime}</Text>
-        </ImageBackground>
-      </TouchableOpacity>
-    );
-  } else if (feed.length === 2) {
-    return (
-      <View>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Recipe', { recipeItem: feed[0] })}
-        >
-          <ImageBackground
-            source={{ uri: feed[0].image.image_url }}
-            style={styles.previewBGImgFull}
-          >
-            <Text style={styles.recipePreviewText}>{feed[0].rTitle}</Text>
-            <Text style={styles.recipePreviewText}>{feed[0].rTime}</Text>
-          </ImageBackground>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Recipe', { recipeItem: feed[1] })}
-        >
-          <ImageBackground
-            source={{ uri: feed[1].image.image_url }}
-            style={styles.previewBGImgFull}
-          >
-            <Text style={styles.recipePreviewText}>{feed[1].rTitle}</Text>
-            <Text style={styles.recipePreviewText}>{feed[1].rTime}</Text>
-          </ImageBackground>
-        </TouchableOpacity>
-      </View>
-    );
-  } else if (feed.length === 3) {
-    return (
-      <View>
-        <View style={{ justifyContent: 'center', flexDirection: 'row' }}>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('Recipe', { recipeItem: feed[0] })
-            }
-          >
-            <ImageBackground
-              source={{ uri: feed[0].image.image_url }}
-              style={styles.previewBGImg}
-            >
-              <Text style={styles.recipePreviewText}>{feed[0].rTitle}</Text>
-              <Text style={styles.recipePreviewText}>{feed[0].rTime}</Text>
-            </ImageBackground>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('Recipe', { recipeItem: feed[1] })
-            }
-          >
-            <ImageBackground
-              source={{ uri: feed[1].image.image_url }}
-              style={styles.previewBGImg}
-            >
-              <Text style={styles.recipePreviewText}>{feed[1].rTitle}</Text>
-              <Text style={styles.recipePreviewText}>{feed[1].rTime}</Text>
-            </ImageBackground>
-          </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Recipe', { recipeItem: feed[2] })}
-        >
-          <ImageBackground
-            source={{ uri: feed[2].image.image_url }}
-            style={styles.previewBGImgFull}
-          >
-            <Text style={styles.recipePreviewText}>{feed[2].rTitle}</Text>
-            <Text style={styles.recipePreviewText}>{feed[2].rTime}</Text>
-          </ImageBackground>
-        </TouchableOpacity>
-      </View>
-    );
-  } else if (feed.length > 3) {
-    return (
-      <View>
-        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('Recipe', { recipeItem: feed[0] })
-            }
-          >
-            <ImageBackground
-              source={{ uri: feed[0].image.image_url }}
-              style={styles.previewBGImg}
-            >
-              <Text style={styles.recipePreviewText}>{feed[0].rTitle}</Text>
-              <Text style={styles.recipePreviewText}>{feed[0].rTime}</Text>
-            </ImageBackground>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('Recipe', { recipeItem: feed[1] })
-            }
-          >
-            <ImageBackground
-              source={{ uri: feed[1].image.image_url }}
-              style={styles.previewBGImg}
-            >
-              <Text style={styles.recipePreviewText}>{feed[1].rTitle}</Text>
-              <Text style={styles.recipePreviewText}>{feed[1].rTime}</Text>
-            </ImageBackground>
-          </TouchableOpacity>
-        </View>
-
-        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('Recipe', { recipeItem: feed[2] })
-            }
-          >
-            <ImageBackground
-              source={{ uri: feed[2].image.image_url }}
-              style={styles.previewBGImg}
-            >
-              <Text style={styles.recipePreviewText}>{feed[2].rTitle}</Text>
-              <Text style={styles.recipePreviewText}>{feed[2].rTime}</Text>
-            </ImageBackground>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('Recipe', { recipeItem: feed[3] })
-            }
-          >
-            <ImageBackground
-              source={{ uri: feed[3].image.image_url }}
-              style={styles.previewBGImg}
-            >
-              <Text style={styles.recipePreviewText}>{feed[3].rTitle}</Text>
-              <Text style={styles.recipePreviewText}>{feed[3].rTime}</Text>
-            </ImageBackground>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  } else {
-    return <View />;
-  }
-};
-
 function Home({ navigation }) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
+  const [alt, setAlt] = useState(0);
+  const [isSupported, setIsSupported] = useState(false);
+  const [subscribed, setSubscribed] = useState(null);
+  const seaLevelPressure = 1013.25;
+  const powerValue = 1 / 5.257;
+  const temperature = 32;
+  const temperatureConvertConstant = 273.15;
+  const divideByValue = 0.0065;
+  const [scanned, setScanned] = useState(false);
+  const [scannedData, setScannedData] = useState('');
 
-  const { recipeFeed, isLoading } = useSelector((state) => ({
-    recipeFeed: state.recipeReducer.recipeFeed,
-    isLoading: state.recipeReducer.isLoading,
-  }));
+  // const { recipeFeed, isLoading } = useSelector((state) => ({
+  //   recipeFeed: state.recipeReducer.recipeFeed,
+  //   isLoading: state.recipeReducer.isLoading,
+  // }));
 
-  setTimeout(() => {
-    setLoading(isLoading);
-  }, 2000);
+  useEffect(() => {
+    (async () => {
+      getPermission();
 
-  useFocusEffect(
-    useCallback(() => {
-      let active = true;
+      const isBarometerSupported = await Barometer.isAvailableAsync();
 
-      if (active) {
-        const subscribe = dispatch(getRecipes());
+      setIsSupported(isBarometerSupported);
+
+      if (isBarometerSupported) {
+        alert('Sensor available..');
+        subscribe();
+      } else {
+        alert('Sensor not available. Altitude cannot be measured.');
       }
-      return () => (active = false);
-    }, [])
-  );
+    })();
+
+    return () => Barometer.removeAllListeners();
+  }, []);
+
+  const calculateHeight = (currentPressure) => {
+    const press = seaLevelPressure / currentPressure;
+    const pressPower = Math.pow(press, powerValue);
+    const pressPowerMinus = pressPower - 1;
+    const temperatureConvert = temperature + temperatureConvertConstant;
+    const pressPowerMultiplyTemp = pressPowerMinus * temperatureConvert;
+    const height = pressPowerMultiplyTemp / divideByValue;
+
+    return height;
+  };
+
+  const getPermission = async () => {
+    const { status } = await Permissions.getAsync(Permissions.LOCATION);
+    const { status: cameraStatus } = await Permissions.getAsync(
+      Permissions.CAMERA
+    );
+
+    if (status !== 'granted' || cameraStatus !== 'granted') {
+      dispatch(getPermissions());
+    }
+  };
+
+  const subscribe = () => {
+    const subscription = Barometer.addListener(({ pressure }) => {
+      const height = calculateHeight(pressure);
+      setAlt(height);
+    });
+  };
+
+  const handleScan = async (scanData) => {
+    const timestamp = Date.now();
+    const timeAndDate = `${dayjs().format('hh:mm A DD-MM-YYYY')}`;
+    const location = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.Highest,
+    });
+
+    dispatch(uploadClockin(timestamp, timeAndDate, alt, location, scanData));
+  };
 
   return (
     <KeyboardAvoidingView
@@ -289,15 +152,20 @@ function Home({ navigation }) {
       style={{ flex: 1 }}
     >
       <AppBar />
-
-      {loading ? (
-        <LoadingIndicator />
-      ) : (
-        <ScrollView keyboardDismissMode="on-drag">
-          <NavIcons navigation={navigation} />
-          <RecipePreview feed={recipeFeed} navigation={navigation} />
-        </ScrollView>
-      )}
+      <TouchableOpacity
+        style={{
+          flex: 1,
+          margin: 25,
+          justifyContent: 'center',
+          alignItems: 'center',
+          borderRadius: 6,
+          backgroundColor: colours.white,
+          elevation: 5,
+        }}
+        onPress={() => navigation.navigate('BarcodeScannerScreen', handleScan)}
+      >
+        <Text>Scan QR</Text>
+      </TouchableOpacity>
     </KeyboardAvoidingView>
   );
 }

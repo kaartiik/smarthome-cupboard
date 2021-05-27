@@ -44,23 +44,23 @@ const getUserProfile = (uid) =>
     .catch((error) => ({ error }));
 
 function* syncUserSaga() {
-  const user = yield call(onAuthStateChanged);
+  // const user = yield call(onAuthStateChanged);
 
-  if (user) {
-    const { dbUser } = yield call(getUserProfile, user.uid);
+  // if (user) {
+  // const { dbUser } = yield call(getUserProfile, user.uid);
 
-    if (dbUser !== null && dbUser !== undefined) {
-      yield put(putUserProfile(dbUser));
-    }
+  // if (dbUser !== null && dbUser !== undefined) {
+  //   yield put(putUserProfile(dbUser));
+  // }
 
-    setTimeout(() => {
-      reset('AppStack');
-    }, 100);
-  } else {
-    setTimeout(() => {
-      reset('AuthStack');
-    }, 100);
-  }
+  setTimeout(() => {
+    reset('AppStack');
+  }, 100);
+  // } else {
+  //   setTimeout(() => {
+  //     reset('AuthStack');
+  //   }, 100);
+  // }
 }
 
 function* loginSaga({ email, password }) {

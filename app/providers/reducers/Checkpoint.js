@@ -1,6 +1,7 @@
-import { actions } from '../actions/Recipes';
+import { actions } from '../actions/Checkpoint';
 
 const initialState = {
+  clockIns: [],
   recipeFeed: [],
   breakfastRecipes: [],
   lunchRecipes: [],
@@ -9,12 +10,12 @@ const initialState = {
   isLoading: false,
 };
 
-export default function recipeReducer(state = initialState, action = {}) {
+export default function checkpointReducer(state = initialState, action = {}) {
   switch (action.type) {
-    case actions.PUT.RECIPES:
+    case actions.PUT.CLOCKINS:
       return {
         ...state,
-        recipeFeed: action.payload,
+        clockIns: action.payload,
       };
 
     case actions.PUT.BREAKFAST_RECIPES:

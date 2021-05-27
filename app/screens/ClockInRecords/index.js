@@ -10,6 +10,7 @@ import {
   TextInput,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
 import AppBar from '../../components/AppBar';
@@ -17,7 +18,7 @@ import LoadingIndicator from '../../components/LoadingIndicator';
 
 import colours from '../../providers/constants/colours';
 
-import { getRecipes, deleteRecipe } from '../../providers/actions/Recipes';
+import { getClockins } from '../../providers/actions/Checkpoint';
 
 const styles = StyleSheet.create({
   divider: {
@@ -29,11 +30,9 @@ const styles = StyleSheet.create({
   },
   recipeDescription: {
     marginVertical: 3,
-    width: 220,
   },
   recipeItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    padding: 5,
     backgroundColor: 'white',
     borderRadius: 6,
   },
@@ -60,34 +59,34 @@ const styles = StyleSheet.create({
   },
 });
 
-const RenderItem = ({ item, navigation, isAdmin }) => {
+const RenderItem = ({ item }) => {
   const dispatch = useDispatch();
 
   return (
     <View style={{ marginTop: 10, padding: 10 }}>
-      <TouchableOpacity
-        style={styles.recipeItem}
-        onPress={() => navigation.navigate('Recipe', { recipeItem: item })}
-      >
-        <Image
-          source={{ uri: item.image.image_url }}
-          style={styles.previewImg}
-        />
-        <View style={{ marginLeft: 10, width: 200 }}>
-          <Text
-            style={{
-              fontSize: 15,
-              color: colours.lightBlue,
-              marginVertical: 3,
-              flexShrink: 1,
-            }}
-          >
-            {item.rTitle.toUpperCase()}
-          </Text>
-          <Text style={styles.recipeDescription}>{item.rTime}</Text>
-        </View>
+      <View style={styles.recipeItem}>
+        <Text
+          style={{
+            fontSize: 15,
+            color: colours.lightBlue,
+            marginVertical: 3,
+            flexShrink: 1,
+          }}
+        >
+          {item.clocked_in_at}
+        </Text>
+        <Text style={styles.recipeDescription}>Recorder: {item.recorder}</Text>
+        <Text style={styles.recipeDescription}>Altitude: {item.altitude}</Text>
 
-        {isAdmin && (
+        <Text style={styles.recipeDescription}>Latitude: {item.latitude}</Text>
+        <Text style={styles.recipeDescription}>
+          Longitude: {item.longitude}
+        </Text>
+
+        <Text style={styles.recipeDescription}>Address: {item.address}</Text>
+      </View>
+
+      {/* {isAdmin && (
           <TouchableOpacity
             onPress={() =>
               dispatch(
@@ -97,8 +96,7 @@ const RenderItem = ({ item, navigation, isAdmin }) => {
           >
             <Ionicons name="ios-trash" size={25} color="red" />
           </TouchableOpacity>
-        )}
-      </TouchableOpacity>
+        )} */}
     </View>
   );
 };
@@ -107,24 +105,25 @@ RenderItem.propTypes = {
   item: PropTypes.object.isRequired,
 };
 
-function AllRecipes({ navigation }) {
+function ClockInRecords({ navigation }) {
   const dispatch = useDispatch();
   const [search, setSearch] = useState('');
   const [data, setData] = useState([]);
 
-  const { isAdmin, recipeFeed, isLoading } = useSelector((state) => ({
-    isAdmin: state.userReducer.isAdmin,
-    recipeFeed: state.recipeReducer.recipeFeed,
-    isLoading: state.recipeReducer.isLoading,
+  const { clockIns, isLoading } = useSelector((state) => ({
+    clockIns: state.checkpointReducer.clockIns,
+    isLoading: state.checkpointReducer.isLoading,
   }));
 
-  useEffect(() => {
-    dispatch(getRecipes());
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(getClockins());
+    }, [])
+  );
 
   useEffect(() => {
-    setData([...recipeFeed]);
-  }, [recipeFeed]);
+    setData([...clockIns]);
+  }, [clockIns]);
 
   const searchData = (searchText) => {
     let newData = [];
@@ -146,12 +145,12 @@ function AllRecipes({ navigation }) {
       <AppBar />
 
       <View style={{ padding: 10 }}>
-        <Text style={{ fontSize: 18 }}>All Recipes</Text>
+        <Text style={{ fontSize: 18 }}>Clock In Records</Text>
 
         <View style={styles.divider} />
       </View>
 
-      <View style={styles.searchBox}>
+      {/* <View style={styles.searchBox}>
         <TextInput
           placeholder="Search..."
           value={search}
@@ -160,7 +159,7 @@ function AllRecipes({ navigation }) {
             searchData(text);
           }}
         />
-      </View>
+      </View> */}
 
       {isLoading ? (
         <LoadingIndicator />
@@ -169,16 +168,11 @@ function AllRecipes({ navigation }) {
           keyExtractor={(item, index) => index.toString()}
           data={data}
           renderItem={({ item, index }) => (
-            <RenderItem
-              key={index}
-              item={item}
-              navigation={navigation}
-              isAdmin={isAdmin}
-            />
+            <RenderItem key={index} item={item} />
           )}
           ListEmptyComponent={
             <View style={styles.flatlistEmptyContainer}>
-              <Text>No recipes yet :(</Text>
+              <Text>No clock in records yet</Text>
             </View>
           }
         />
@@ -187,4 +181,4 @@ function AllRecipes({ navigation }) {
   );
 }
 
-export default AllRecipes;
+export default ClockInRecords;

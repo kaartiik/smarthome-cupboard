@@ -12,13 +12,10 @@ import { Ionicons } from '@expo/vector-icons';
 import Loading from '../../components/LoadingIndicator';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import {
-  getClockinSiteNames,
-  getRecorderClockinSiteNames,
-} from '../../providers/actions/Checkpoint';
-import colours from '../../providers/constants/colours';
+import { getUsers } from '../../providers/actions/User';
 import commonStyles from '../../providers/constants/commonStyles';
-import * as ROLES from '../../providers/constants/roles';
+
+import colours from '../../providers/constants/colours';
 
 const styles = StyleSheet.create({
   divider: {
@@ -43,57 +40,74 @@ const styles = StyleSheet.create({
 const RenderItem = ({ item }) => {
   const navigation = useNavigation();
   return (
-    <TouchableOpacity
+    <View
       style={{
         marginVertical: 10,
         padding: 10,
         backgroundColor: colours.white,
         borderRadius: 6,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
       }}
-      onPress={() => navigation.navigate('Records', { siteID: item.siteID })}
     >
-      <Text style={{ fontWeight: 'bold' }} numberOfLines={1}>
-        {item.siteName}
-      </Text>
-    </TouchableOpacity>
+      <View>
+        <Text style={{ fontWeight: 'bold' }} numberOfLines={1}>
+          {item.name}
+        </Text>
+
+        <Text style={{ fontWeight: 'bold' }} numberOfLines={1}>
+          {item.siteName}
+        </Text>
+      </View>
+
+      <TouchableOpacity
+        style={{ marginHorizontal: 8 }}
+        onPress={() =>
+          navigation.navigate('UpdateUser', {
+            userObject: item,
+          })
+        }
+      >
+        <Ionicons
+          name="create-outline"
+          size={20}
+          color={colours.themePrimary}
+        />
+      </TouchableOpacity>
+    </View>
   );
 };
 
-export default function ClockInSites() {
+export default function ViewUsers() {
   const dispatch = useDispatch();
   const [search, setSearch] = useState('');
   const [data, setData] = useState([]);
 
-  const { role, clockInSiteNames, isLoading } = useSelector((state) => ({
-    role: state.userReducer.role,
-    clockInSiteNames: state.checkpointReducer.clockInSiteNames,
+  const { allUsers, isLoading } = useSelector((state) => ({
+    allUsers: state.userReducer.allUsers,
     isLoading: state.appActionsReducer.isLoading,
   }));
 
   useFocusEffect(
     useCallback(() => {
-      if (role === ROLES.ADMIN) {
-        console.log('get admin sitenames');
-        dispatch(getClockinSiteNames());
-      } else {
-        dispatch(getRecorderClockinSiteNames());
-      }
+      dispatch(getUsers());
     }, [])
   );
 
   useEffect(() => {
-    setData(clockInSiteNames);
-  }, [clockInSiteNames]);
+    setData(allUsers);
+  }, [allUsers]);
 
   const searchData = (searchText) => {
     let newData = [];
     if (searchText) {
-      newData = clockInSiteNames.filter((item) => {
-        return item.siteName.indexOf(searchText) > -1;
+      newData = allUsers.filter((item) => {
+        return item.name.indexOf(searchText) > -1;
       });
       setData([...newData]);
     } else {
-      setData([...clockInSiteNames]);
+      setData([...allUsers]);
     }
   };
 
@@ -103,8 +117,7 @@ export default function ClockInSites() {
         <Loading />
       ) : (
         <View>
-          <Text style={commonStyles.screenHeaderText}>Records - Sites</Text>
-
+          <Text style={commonStyles.screenHeaderText}>Users</Text>
           <FlatList
             keyExtractor={(item, index) => index.toString()}
             data={data}
@@ -125,7 +138,7 @@ export default function ClockInSites() {
             )}
             ListEmptyComponent={
               <View style={styles.flatlistEmptyContainer}>
-                <Text>No sites</Text>
+                <Text>No users</Text>
               </View>
             }
           />

@@ -2,11 +2,8 @@ import { actions } from '../actions/Checkpoint';
 
 const initialState = {
   clockIns: [],
-  recipeFeed: [],
-  breakfastRecipes: [],
-  lunchRecipes: [],
-  dinnerRecipes: [],
-  recipePhotos: [],
+  clockInRawData: null,
+  clockInSiteNames: [],
   isLoading: false,
 };
 
@@ -18,28 +15,16 @@ export default function checkpointReducer(state = initialState, action = {}) {
         clockIns: action.payload,
       };
 
-    case actions.PUT.BREAKFAST_RECIPES:
+    case actions.PUT.CLOCKINS_RAWDATA:
       return {
         ...state,
-        breakfastRecipes: action.payload,
+        clockInRawData: action.payload,
       };
 
-    case actions.PUT.LUNCH_RECIPES:
+    case actions.PUT.CLOCKINS_SITENAMES:
       return {
         ...state,
-        lunchRecipes: action.payload,
-      };
-
-    case actions.PUT.DINNER_RECIPES:
-      return {
-        ...state,
-        dinnerRecipes: action.payload,
-      };
-
-    case actions.PUT.RECIPE_PHOTOS:
-      return {
-        ...state,
-        recipePhotos: action.payload,
+        clockInSiteNames: action.payload,
       };
 
     case actions.PUT.LOADING_STATUS:

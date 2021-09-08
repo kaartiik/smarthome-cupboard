@@ -1,21 +1,19 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
 import colours from '../providers/constants/colours';
-import Home from '../screens/Home';
-import ClockInRecords from '../screens/ClockInRecords';
-import ScannerStack from './ScannerStack';
-
-// import { AuthContext } from './AuthProvider';
+import RecordsStack from './RecordsStack';
+import HomeStack from './HomeStack';
+import SitesStack from './SitesStack';
+import UsersStack from './UsersStack';
+import * as ROLES from '../providers/constants/roles';
 
 const Tab = createBottomTabNavigator();
 
 export default function BottomTabNavigator() {
-  // const { isAuthorized, isAdmin } = useContext(AuthContext);
-
-  const { isAdmin } = useSelector((state) => ({
-    isAdmin: state.userReducer.isAdmin,
+  const { role } = useSelector((state) => ({
+    role: state.userReducer.role,
   }));
 
   return (
@@ -28,14 +26,11 @@ export default function BottomTabNavigator() {
             iconName = 'ios-home';
           } else if (route.name === 'Records') {
             iconName = 'ios-list';
+          } else if (route.name === 'Sites') {
+            iconName = 'ios-business';
+          } else if (route.name === 'Users') {
+            iconName = 'ios-people';
           }
-          //else if (route.name === 'Recipes') {
-          //   iconName = 'ios-list';
-          // } else if (route.name === 'Comments') {
-          //   iconName = 'ios-mail';
-          // } else if (route.name === 'Contact Us') {
-          //   iconName = 'ios-information';
-          // }
 
           // You can return any component that you like here!
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -48,17 +43,16 @@ export default function BottomTabNavigator() {
         // showLabel:  false
       }}
     >
-      <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Records" component={ClockInRecords} />
-      {/* <Tab.Screen name="Recipes" component={AllRecipes} />
-      {isAdmin ? (
+      {role === ROLES.RECORDER && (
+        <Tab.Screen name="Home" component={HomeStack} />
+      )}
+      <Tab.Screen name="Records" component={RecordsStack} />
+      {role === ROLES.ADMIN && (
         <>
-          <Tab.Screen name="Upload" component={UploadRecipe} />
-          <Tab.Screen name="Comments" component={AllComments} />
+          <Tab.Screen name="Sites" component={SitesStack} />
+          <Tab.Screen name="Users" component={UsersStack} />
         </>
-      ) : (
-        <Tab.Screen name="Contact Us" component={SubmitComments} />
-      )} */}
+      )}
     </Tab.Navigator>
   );
 }

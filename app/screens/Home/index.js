@@ -16,15 +16,11 @@ import {
 } from 'react-native';
 import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
-import { BarCodeScanner } from 'expo-barcode-scanner';
 import { Barometer } from 'expo-sensors';
-import PropTypes from 'prop-types';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
-import { Card, CardItem } from 'native-base';
-import { Ionicons } from '@expo/vector-icons';
-import AppBar from '../../components/AppBar';
+import { useDispatch } from 'react-redux';
 import LoadingIndicator from '../../components/LoadingIndicator';
+import commonStyles from '../../providers/constants/commonStyles';
+
 import colours from '../../providers/constants/colours';
 
 import { uploadClockin } from '../../providers/actions/Checkpoint';
@@ -83,11 +79,6 @@ function Home({ navigation }) {
   const [scanned, setScanned] = useState(false);
   const [scannedData, setScannedData] = useState('');
 
-  // const { recipeFeed, isLoading } = useSelector((state) => ({
-  //   recipeFeed: state.recipeReducer.recipeFeed,
-  //   isLoading: state.recipeReducer.isLoading,
-  // }));
-
   useEffect(() => {
     (async () => {
       getPermission();
@@ -139,8 +130,8 @@ function Home({ navigation }) {
   const handleScan = async (scanData) => {
     const timestamp = Date.now();
     const timeAndDate = `${dayjs().format('hh:mm A DD-MM-YYYY')}`;
-    const location = await Location.getCurrentPositionAsync({
-      accuracy: Location.Accuracy.Highest,
+    const location = await Location.getLastKnownPositionAsync({
+      accuracy: 6,
     });
 
     dispatch(uploadClockin(timestamp, timeAndDate, alt, location, scanData));
@@ -149,13 +140,14 @@ function Home({ navigation }) {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1 }}
+      style={{ flex: 1, padding: 10 }}
     >
-      <AppBar />
+      <Text style={commonStyles.screenHeaderText}>Home</Text>
+
       <TouchableOpacity
         style={{
           flex: 1,
-          margin: 25,
+          marginVertical: 25,
           justifyContent: 'center',
           alignItems: 'center',
           borderRadius: 6,

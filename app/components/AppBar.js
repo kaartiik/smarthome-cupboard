@@ -1,10 +1,34 @@
 import React from 'react';
-import { View, TouchableOpacity, Image } from 'react-native';
-import { Header, Left, Right, Body } from 'native-base';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Image, StyleSheet } from 'react-native';
+import { Header } from '@react-navigation/stack';
 import { useDispatch, useSelector } from 'react-redux';
 import colours from '../providers/constants/colours';
-import { logout } from '../providers/actions/User';
+
+const styles = StyleSheet.create({
+  headerContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: `${100}%`,
+    height: Header.height,
+
+    backgroundColor: colours.themePrimary,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 8,
+
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 const AppBar = () => {
   const dispatch = useDispatch();
@@ -14,38 +38,17 @@ const AppBar = () => {
   }));
 
   return (
-    <View>
-      <Header
+    <View style={styles.headerContainer}>
+      <Image
+        // eslint-disable-next-line global-require
+        source={require('../../assets/logo.png')}
+        resizeMode="contain"
         style={{
-          backgroundColor: colours.themePrimary,
-          shadowColor: '#000',
-          shadowOffset: {
-            width: 0,
-            height: 2,
-          },
-          shadowOpacity: 0.25,
-          shadowRadius: 3.84,
-
-          elevation: 8,
+          marginTop: 10,
+          height: 40,
+          width: 40,
         }}
-      >
-        <Left>
-          <TouchableOpacity onPress={() => dispatch(logout())}>
-            <Ionicons name="ios-exit" size={20} color="white" />
-          </TouchableOpacity>
-        </Left>
-
-        <Body>
-          <Image
-            // eslint-disable-next-line global-require
-            source={require('../../assets/logo.png')}
-            resizeMode="contain"
-            style={{ alignSelf: 'flex-start', height: '70%', width: '170%' }}
-          />
-        </Body>
-
-        <Right />
-      </Header>
+      />
     </View>
   );
 };

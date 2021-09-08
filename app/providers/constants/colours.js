@@ -1,6 +1,6 @@
 const colours = {
-  themePrimary: '#EB0505',
-  themePrimaryLight: '#FF9282',
+  themePrimary: '#112bed',
+  themePrimaryLight: '#c2c7f2',
   themePrimaryDark: '#C5282B',
   themeSecondary: '#19323C',
   themeSecondaryLight: '#435B66',
@@ -12,6 +12,8 @@ const colours = {
   LightGray: '9d9d9d',
   smoke: '#EEEEEE',
   white: '#FFFFFF',
+  gradientBlueDark: '#335CC5',
+  gradientBleLight: '#637FFD',
 };
 
 // themePrimary: '#E84C3D',

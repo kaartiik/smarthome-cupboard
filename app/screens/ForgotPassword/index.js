@@ -18,7 +18,7 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-import { login } from '../../providers/actions/User';
+import { forgotPassword } from '../../providers/actions/User';
 import colours from '../../providers/constants/colours';
 
 // import { AuthContext } from '../navigation/AuthProvider';\
@@ -56,13 +56,9 @@ const validationSchema = yup.object().shape({
     .string()
     .required('Required')
     .email('Please enter valid email address.'),
-  password: yup
-    .string()
-    .required('Required')
-    .min(6, 'Minimum 6 characters required.'),
 });
 
-export default function Login() {
+export default function ForgotPassword() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
@@ -70,8 +66,8 @@ export default function Login() {
     isLoading: state.appActionsReducer.isLoading,
   }));
 
-  const handleLogin = ({ email, password }) => {
-    dispatch(login({ email, password }));
+  const handleSubmit = ({ email }) => {
+    dispatch(forgotPassword(email, () => navigation.goBack()));
   };
 
   LayoutAnimation.easeInEaseOut();
@@ -87,13 +83,15 @@ export default function Login() {
         <Loading />
       ) : (
         <ScrollView>
-          <Text style={styles.greeting}>{'Hello again.\nWelcome back.'}</Text>
+          <Text
+            style={styles.greeting}
+          >{`Forgot your password?\nLet's get you a new one.`}</Text>
 
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.form}>
               <Formik
-                initialValues={{ email: '', password: '' }}
-                onSubmit={(values) => handleLogin(values)}
+                initialValues={{ email: '' }}
+                onSubmit={(values) => handleSubmit(values)}
                 validationSchema={validationSchema}
               >
                 {({
@@ -120,40 +118,17 @@ export default function Login() {
                         {(touched.email || submitCount > 0) && errors.email}
                       </Text>
 
-                      <Text>Password</Text>
-
-                      <View style={styles.textboxContainer}>
-                        <TextInput
-                          secureTextEntry
-                          placeholder="Enter password..."
-                          value={values.password}
-                          onChangeText={handleChange('password')}
-                          onBlur={handleBlur('password')}
-                        />
-                      </View>
-                      <Text style={{ color: 'red' }}>
-                        {(touched.password || submitCount > 0) &&
-                          errors.password}
-                      </Text>
-
                       <TouchableOpacity
                         style={styles.bigBtn}
                         onPress={handleSubmit}
                         title="SUBMIT"
                       >
-                        <Text style={{ color: 'white' }}>Sign In</Text>
+                        <Text style={{ color: 'white' }}>Reset Password</Text>
                       </TouchableOpacity>
                     </View>
                   );
                 }}
               </Formik>
-
-              <TouchableOpacity
-                style={{ justifyContent: 'center', alignItems: 'center' }}
-                onPress={() => navigation.navigate('ForgotPassword')}
-              >
-                <Text style={{ color: 'blue' }}>Forgot Password</Text>
-              </TouchableOpacity>
             </View>
           </TouchableWithoutFeedback>
         </ScrollView>

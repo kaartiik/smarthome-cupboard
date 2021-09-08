@@ -12,13 +12,10 @@ import { Ionicons } from '@expo/vector-icons';
 import Loading from '../../components/LoadingIndicator';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import {
-  getClockinSiteNames,
-  getRecorderClockinSiteNames,
-} from '../../providers/actions/Checkpoint';
-import colours from '../../providers/constants/colours';
+import { getSites, deleteSite } from '../../providers/actions/Sites';
 import commonStyles from '../../providers/constants/commonStyles';
-import * as ROLES from '../../providers/constants/roles';
+
+import colours from '../../providers/constants/colours';
 
 const styles = StyleSheet.create({
   divider: {
@@ -41,59 +38,95 @@ const styles = StyleSheet.create({
 });
 
 const RenderItem = ({ item }) => {
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   return (
-    <TouchableOpacity
+    <View
       style={{
         marginVertical: 10,
         padding: 10,
         backgroundColor: colours.white,
         borderRadius: 6,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
       }}
-      onPress={() => navigation.navigate('Records', { siteID: item.siteID })}
     >
       <Text style={{ fontWeight: 'bold' }} numberOfLines={1}>
         {item.siteName}
       </Text>
-    </TouchableOpacity>
+
+      <View style={{ flexDirection: 'row' }}>
+        <TouchableOpacity
+          style={{ marginHorizontal: 8 }}
+          onPress={() =>
+            navigation.navigate('UpdateSites', {
+              siteID: item.siteID,
+              siteName: item.siteName,
+            })
+          }
+        >
+          <Ionicons
+            name="create-outline"
+            size={20}
+            color={colours.themePrimary}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{ marginHorizontal: 8 }}
+          onPress={() =>
+            Alert.alert(
+              'Deleting site',
+              `Are you sure you want to delete the site ${item.siteName} ?`,
+              [
+                {
+                  text: 'Cancel',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+                {
+                  text: 'OK',
+                  onPress: () => dispatch(deleteSite(item.siteID)),
+                },
+              ]
+            )
+          }
+        >
+          <Ionicons name="ios-trash-outline" size={20} color="red" />
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 };
 
-export default function ClockInSites() {
+export default function ViewSites() {
   const dispatch = useDispatch();
   const [search, setSearch] = useState('');
   const [data, setData] = useState([]);
 
-  const { role, clockInSiteNames, isLoading } = useSelector((state) => ({
-    role: state.userReducer.role,
-    clockInSiteNames: state.checkpointReducer.clockInSiteNames,
+  const { allSites, isLoading } = useSelector((state) => ({
+    allSites: state.sitesReducer.allSites,
     isLoading: state.appActionsReducer.isLoading,
   }));
 
   useFocusEffect(
     useCallback(() => {
-      if (role === ROLES.ADMIN) {
-        console.log('get admin sitenames');
-        dispatch(getClockinSiteNames());
-      } else {
-        dispatch(getRecorderClockinSiteNames());
-      }
+      dispatch(getSites());
     }, [])
   );
 
   useEffect(() => {
-    setData(clockInSiteNames);
-  }, [clockInSiteNames]);
+    setData(allSites);
+  }, [allSites]);
 
   const searchData = (searchText) => {
     let newData = [];
     if (searchText) {
-      newData = clockInSiteNames.filter((item) => {
+      newData = allSites.filter((item) => {
         return item.siteName.indexOf(searchText) > -1;
       });
       setData([...newData]);
     } else {
-      setData([...clockInSiteNames]);
+      setData([...allSites]);
     }
   };
 
@@ -103,7 +136,7 @@ export default function ClockInSites() {
         <Loading />
       ) : (
         <View>
-          <Text style={commonStyles.screenHeaderText}>Records - Sites</Text>
+          <Text style={commonStyles.screenHeaderText}>Sites</Text>
 
           <FlatList
             keyExtractor={(item, index) => index.toString()}

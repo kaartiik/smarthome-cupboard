@@ -1,5 +1,5 @@
 export const actions = {
-  CREATE_USER: 'CREATE_USER',
+  REGISTER_USER: 'REGISTER_USER',
   LOGIN: {
     REQUEST: 'LOGIN_REQUEST',
   },
@@ -29,9 +29,9 @@ export const actions = {
   },
 };
 
-export const createUser = (name, siteID, email, password) => ({
-  type: actions.CREATE_USER,
-  payload: { name, siteID, email, password },
+export const registerUser = (name, email, password) => ({
+  type: actions.REGISTER_USER,
+  payload: { name, email, password },
 });
 
 export const updateUserSite = (userObject, siteID) => ({

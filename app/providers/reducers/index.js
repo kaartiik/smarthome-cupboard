@@ -4,6 +4,9 @@ import checkpointReducer from './Checkpoint';
 import permissionsReducer from './Permissions';
 import appActionsReducer from './AppActions';
 import sitesReducer from './Sites';
+import cupboardReducer from './Cupboard';
+import itemReducer from './Item';
+import reminderReducer from './Reminder';
 
 export default combineReducers({
   userReducer,
@@ -11,4 +14,7 @@ export default combineReducers({
   permissionsReducer,
   appActionsReducer,
   sitesReducer,
+  cupboardReducer,
+  itemReducer,
+  reminderReducer
 });

@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
 import colours from '../providers/constants/colours';
-import RecordsStack from './RecordsStack';
+import RemindersStack from './RemindersStack';
 import HomeStack from './HomeStack';
 import SitesStack from './SitesStack';
 import UsersStack from './UsersStack';
@@ -24,13 +24,14 @@ export default function BottomTabNavigator() {
 
           if (route.name === 'Home') {
             iconName = 'ios-home';
-          } else if (route.name === 'Records') {
-            iconName = 'ios-list';
-          } else if (route.name === 'Sites') {
+          }  else if (route.name === 'Sites') {
             iconName = 'ios-business';
-          } else if (route.name === 'Users') {
-            iconName = 'ios-people';
+          } else if (route.name === 'Reminders') {
+            iconName = 'ios-list';
           }
+          // else if (route.name === 'Users') {
+          //   iconName = 'ios-people';
+          // }
 
           // You can return any component that you like here!
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -43,16 +44,11 @@ export default function BottomTabNavigator() {
         // showLabel:  false
       }}
     >
-      {role === ROLES.RECORDER && (
         <Tab.Screen name="Home" component={HomeStack} />
-      )}
-      <Tab.Screen name="Records" component={RecordsStack} />
-      {role === ROLES.ADMIN && (
-        <>
-          <Tab.Screen name="Sites" component={SitesStack} />
-          <Tab.Screen name="Users" component={UsersStack} />
-        </>
-      )}
+        <Tab.Screen name="Sites" component={SitesStack} />
+        <Tab.Screen name="Reminders" component={RemindersStack} />
+
+          {/* <Tab.Screen name="Users" component={UsersStack} /> */}
     </Tab.Navigator>
   );
 }

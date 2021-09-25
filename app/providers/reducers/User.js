@@ -5,10 +5,6 @@ const initialState = {
   name: '',
   email: '',
   uuid: '',
-  role: '',
-  siteID: '',
-  siteName: '',
-  isAdmin: false,
   isSuccess: false,
   allUsers: [],
   isLoading: false,
@@ -17,16 +13,12 @@ const initialState = {
 export default function userReducer(state = initialState, action = {}) {
   switch (action.type) {
     case actions.PUT.USER_PROFILE: {
-      const { uuid, name, email, role, siteID, siteName } = action.payload;
+      const { uuid, name, email } = action.payload;
       return {
         ...state,
         name,
         email,
         uuid,
-        role,
-        siteID,
-        siteName,
-        isAdmin: role === ROLES.ADMIN ? true : false,
       };
     }
 

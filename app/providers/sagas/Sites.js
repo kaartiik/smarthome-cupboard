@@ -5,6 +5,9 @@ import rsf, { database } from '../config';
 import { actions, putSites } from '../actions/Sites';
 import { putLoadingStatus } from '../actions/AppActions';
 
+
+const getUuidFromState = (state) => state.userReducer.uuid;
+
 const getSitesFromState = (state) => state.sitesReducer.allSites;
 
 const fetchNewSiteKey = () => database.ref('sites').push().key;
@@ -13,10 +16,19 @@ function* getAllSitesSaga() {
   try {
     yield put(putLoadingStatus(true));
 
-    const data = yield call(rsf.database.read, 'sites');
+    const uuid = yield select(getUuidFromState);
+
+    const data = yield call(rsf.database.read, `sites/${uuid}`);
     const exists = data !== null && data !== undefined;
+    // let sitesArr = [];
     if (exists) {
       const sitesArr = Object.values(data);
+      // const sitesObject = initialSitesArr[0];
+
+      // for(const i in sitesObject) {
+      //   sitesArr.push(sitesObject[i]);
+      // }
+      
       yield put(putSites(sitesArr));
     }
     yield put(putLoadingStatus(false));
@@ -31,6 +43,8 @@ function* addSiteSaga({ payload }) {
     yield put(putLoadingStatus(true));
     const siteName = payload;
 
+    const uuid = yield select(getUuidFromState);
+
     const siteID = yield select(fetchNewSiteKey);
 
     const newSite = {
@@ -38,7 +52,7 @@ function* addSiteSaga({ payload }) {
       siteName,
     };
 
-    yield call(rsf.database.update, `sites/${siteID}`, newSite);
+    yield call(rsf.database.update, `sites/${uuid}/${siteID}`, newSite);
 
     const allSites = yield select(getSitesFromState);
 
@@ -59,7 +73,9 @@ function* updateSiteSaga({ payload }) {
     yield put(putLoadingStatus(true));
     const { siteID, siteName } = payload;
 
-    yield call(rsf.database.patch, `sites/${siteID}`, {
+    const uuid = yield select(getUuidFromState);
+
+    yield call(rsf.database.patch, `sites/${uuid}/${siteID}`, {
       siteName,
     });
 
@@ -89,7 +105,9 @@ function* deleteSiteSaga({ payload }) {
     yield put * putLoadingStatus(true);
     const siteID = payload;
 
-    yield call(rsf.database.delete, `sites/${siteID}`);
+    const uuid = yield select(getUuidFromState);
+
+    yield call(rsf.database.delete, `sites/${uuid}/${siteID}`);
 
     const allSites = yield select(getSitesFromState);
 

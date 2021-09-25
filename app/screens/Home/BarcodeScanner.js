@@ -3,20 +3,18 @@ import React, { useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { useNavigation } from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
+import { getCupboards, putCupboard } from '../../providers/actions/Cupboard';
 
-function BarCodeScannerScreen({ route }) {
-  const onScan = route.params;
+function BarCodeScannerScreen() {
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const [scanned, setScanned] = useState(false);
 
   const handleBarCodeScanned = ({ type, data }) => {
-    if (data.indexOf('Point') !== 0) {
-      alert('Invalid QR Code. Scan a valid checkpoint QR Code.');
-      return;
-    }
-    onScan(data);
-    navigation.navigate('Home');
-    alert('Clocked in successfully.');
+    const scannedObject = JSON.parse(data);
+    dispatch(putCupboard(scannedObject.cupboardID, scannedObject.cupboardName));
+    navigation.navigate('Items', {screen: 'ViewItems'});
   };
 
   return (

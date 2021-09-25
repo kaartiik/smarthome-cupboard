@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Patrol Service",
-    "slug": "patrol-service",
+    "name": "Smarthome Cupboard",
+    "slug": "smart-home-cupboard",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/app_icon.png",
@@ -17,20 +17,20 @@
       "**/*"
     ],
     "ios": {
-      "bundleIdentifier": "com.patrolservice",
+      "bundleIdentifier": "com.smarthomecupboard",
       "buildNumber": "1.0.0",
       "supportsTablet": true,
       "requireFullScreen": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "Patrol Service needs to access the device's camera to capture pictures for the journal.",
-        "NSLocationWhenInUseUsageDescription": "Patrol Service needs to access the device's location to verify that the user is on-site.",
-        "NSFaceIDUsageDescription ": "Patrol Service need to use biometrics to unlock this app.",
-        "NSPhotoLibraryAddUsageDescription": "Give Patrol Service permission to save photos.",
-        "NSPhotoLibraryUsageDescription": "Give Patrol Service permission to access your photos."
+        "NSCameraUsageDescription": "Smarthome Cupboard needs to access the device's camera to capture pictures for the journal.",
+        "NSLocationWhenInUseUsageDescription": "Smarthome Cupboard needs to access the device's location to verify that the user is on-site.",
+        "NSFaceIDUsageDescription ": "Smarthome Cupboard need to use biometrics to unlock this app.",
+        "NSPhotoLibraryAddUsageDescription": "Give Smarthome Cupboard permission to save photos.",
+        "NSPhotoLibraryUsageDescription": "Give Smarthome Cupboard permission to access your photos."
       }
     },
     "android": {
-      "package": "com.patrolservice",
+      "package": "com.smarthomecupboard",
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/app_icon.png",

@@ -150,6 +150,13 @@ export default function Login() {
 
               <TouchableOpacity
                 style={{ justifyContent: 'center', alignItems: 'center' }}
+                onPress={() => navigation.navigate('Register')}
+              >
+                <Text style={{ color: 'blue' }}>Dont have an account? Register here.</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{ justifyContent: 'center', alignItems: 'center' }}
                 onPress={() => navigation.navigate('ForgotPassword')}
               >
                 <Text style={{ color: 'blue' }}>Forgot Password</Text>

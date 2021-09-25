@@ -42,7 +42,7 @@ const AppBarAdd = ({ navigateTo }) => {
         justifyContent: 'center',
         paddingHorizontal: 10,
       }}
-      onPress={() => navigation.navigate(navigateTo)}
+      onPress={() => navigation.navigate(navigateTo, {cupboardObject: null, itemObject:null, reminderObject: null})}
     >
       <Ionicons name="add-circle-outline" size={20} color="white" />
     </TouchableOpacity>

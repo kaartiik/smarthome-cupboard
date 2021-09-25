@@ -12,7 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Loading from '../../components/LoadingIndicator';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { getSites, deleteSite } from '../../providers/actions/Sites';
+import { deleteItem, getItems } from '../../providers/actions/Item';
 import commonStyles from '../../providers/constants/commonStyles';
 
 import colours from '../../providers/constants/colours';
@@ -38,50 +38,48 @@ const styles = StyleSheet.create({
 });
 
 const RenderItem = ({ item }) => {
-  const dispatch = useDispatch();
   const navigation = useNavigation();
   return (
-    <TouchableOpacity
+    <View
       style={{
         marginVertical: 10,
         padding: 10,
         backgroundColor: colours.white,
         borderRadius: 6,
         flexDirection: 'row',
+        alignItems: 'center',
         justifyContent: 'space-between',
       }}
-      onPress={() =>
-        navigation.navigate('Cupboards', {screen: 'ViewCupboards', params: {
-          siteID: item.siteID},
-        })
-      }
     >
-      <Text style={{ fontWeight: 'bold' }} numberOfLines={1}>
-        {item.siteName}
-      </Text>
+      <View>
+        <Text style={{ fontWeight: 'bold' }} numberOfLines={1}>
+          {item.itemName}
+        </Text>
 
-      <View style={{ flexDirection: 'row' }}>
-        <TouchableOpacity
-          style={{ marginHorizontal: 8 }}
-          onPress={() =>
-            navigation.navigate('UpdateSites', {
-              siteID: item.siteID,
-              siteName: item.siteName,
-            })
-          }
-        >
-          <Ionicons
-            name="create-outline"
-            size={20}
-            color={colours.themePrimary}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
+        <Text style={{ fontWeight: 'bold' }} numberOfLines={1}>
+          {item.itemCount}
+        </Text>
+      </View>
+
+      <TouchableOpacity
+        style={{ marginHorizontal: 8 }}
+        onPress={() => 
+          navigation.navigate('Items', {screen: 'UpdateItem', params: {itemObject: item}})
+        }
+      >
+        <Ionicons
+          name="create-outline"
+          size={20}
+          color={colours.themePrimary}
+        />
+      </TouchableOpacity>
+
+      <TouchableOpacity
           style={{ marginHorizontal: 8 }}
           onPress={() =>
             Alert.alert(
               'Deleting site',
-              `Are you sure you want to delete the site ${item.siteName} ?`,
+              `Are you sure you want to delete ${item.itemName} ?`,
               [
                 {
                   text: 'Cancel',
@@ -90,7 +88,7 @@ const RenderItem = ({ item }) => {
                 },
                 {
                   text: 'OK',
-                  onPress: () => dispatch(deleteSite(item.siteID)),
+                  onPress: () => dispatch(deleteItem(item.cupboardID, item.itemID)),
                 },
               ]
             )
@@ -98,40 +96,40 @@ const RenderItem = ({ item }) => {
         >
           <Ionicons name="ios-trash-outline" size={20} color="red" />
         </TouchableOpacity>
-      </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 
-export default function ViewSites() {
+export default function ViewItems({route}) {
   const dispatch = useDispatch();
   const [search, setSearch] = useState('');
   const [data, setData] = useState([]);
 
-  const { allSites, isLoading } = useSelector((state) => ({
-    allSites: state.sitesReducer.allSites,
+  const { allItems, cupboardID, isLoading } = useSelector((state) => ({
+    allItems: state.itemReducer.allItems,
+    cupboardID: state.cupboardReducer.cupboardID,
     isLoading: state.appActionsReducer.isLoading,
   }));
 
   useFocusEffect(
     useCallback(() => {
-      dispatch(getSites());
+      dispatch(getItems(cupboardID));
     }, [])
   );
 
   useEffect(() => {
-    setData(allSites);
-  }, [allSites]);
+    setData(allItems);
+  }, [allItems]);
 
   const searchData = (searchText) => {
     let newData = [];
     if (searchText) {
-      newData = allSites.filter((item) => {
-        return item.siteName.indexOf(searchText) > -1;
+      newData = allItems.filter((item) => {
+        return item.itemName.indexOf(searchText) > -1;
       });
       setData([...newData]);
     } else {
-      setData([...allSites]);
+      setData([...allItems]);
     }
   };
 
@@ -141,8 +139,7 @@ export default function ViewSites() {
         <Loading />
       ) : (
         <View>
-          <Text style={commonStyles.screenHeaderText}>Sites</Text>
-
+          <Text style={commonStyles.screenHeaderText}>Items</Text>
           <FlatList
             keyExtractor={(item, index) => index.toString()}
             data={data}
@@ -163,7 +160,7 @@ export default function ViewSites() {
             )}
             ListEmptyComponent={
               <View style={styles.flatlistEmptyContainer}>
-                <Text>No sites</Text>
+                <Text>No items</Text>
               </View>
             }
           />

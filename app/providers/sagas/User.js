@@ -16,6 +16,7 @@ import {
   putUsers,
   putLogout,
 } from '../actions/User';
+import { putSites } from '../actions/Sites';
 import { putLoadingStatus } from '../actions/AppActions';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -62,12 +63,7 @@ function* syncUserSaga() {
       const { dbUser } = yield call(getUserProfile, user.uid);
 
       if (dbUser !== null && dbUser !== undefined) {
-        const siteName = yield call(
-          rsf.database.read,
-          `sites/${dbUser.siteID}/siteName`
-        );
-
-        yield put(putUserProfile({ ...dbUser, siteName }));
+        yield put(putUserProfile({ ...dbUser }));
 
         setTimeout(() => {
           reset('AppStack');
@@ -160,10 +156,10 @@ function* getAllUsersSaga() {
   }
 }
 
-function* createUserSaga({ payload }) {
+function* registerUserSaga({ payload }) {
   try {
     yield put(putLoadingStatus(true));
-    const { name, siteID, email, password } = payload;
+    const { name, email, password } = payload;
     const user = yield call(
       rsf.auth.createUserWithEmailAndPassword,
       email,
@@ -173,18 +169,17 @@ function* createUserSaga({ payload }) {
     const newUser = {
       name,
       email,
-      siteID,
-      role: ROLES.RECORDER,
       uuid: user.user.uid,
     };
 
-    yield call(rsf2.database.update, `users/${user.user.uid}`, newUser);
-
-    yield call(rsf2.auth.signOut);
+    yield call(rsf.database.update, `users/${user.user.uid}`, newUser);
 
     yield put(putLoadingStatus(false));
+    
 
     alert('User created successfully!');
+
+    yield call(syncUserSaga);
   } catch (error) {
     yield put(putLoadingStatus(false));
     alert(`Failed to create new user. ${error}`);
@@ -259,7 +254,7 @@ export default function* User() {
   yield all([
     takeLatest(actions.LOGIN.REQUEST, loginSaga),
     takeLatest(actions.FORGOT_PASSWORD.REQUEST, forgotPasswordSaga),
-    takeLatest(actions.CREATE_USER, createUserSaga),
+    takeLatest(actions.REGISTER_USER, registerUserSaga),
     takeLatest(actions.LOGOUT.REQUEST, logoutSaga),
     takeEvery(actions.SYNC_USER, syncUserSaga),
     takeLatest(actions.GET.USERS, getAllUsersSaga),

@@ -20,7 +20,7 @@ export default function CupboardsStack() {
         name="ViewCupboards"
         component={ViewCupboards}
         options={{
-          headerLeft: () => <AppBarLogout />,
+          headerLeft: () => <AppBarBack />,
           headerBackground: () => <AppBar />,
           headerRight: () => <AppBarAdd navigateTo="UpdateCupboard" />,
           headerTitleStyle: { display: 'none' },

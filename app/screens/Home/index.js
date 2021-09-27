@@ -50,7 +50,11 @@ const SitesSection = ({sites}) => {
 
 <View style={{flexDirection:'row', flexWrap:'wrap'}}>
     {sites.map((site, idx) => (
-      <TouchableOpacity key={idx} style={{backgroundColor: 'black', height: '80%', width: '40%', margin: 10, alignItems: 'center', justifyContent:'center'}}>
+      <TouchableOpacity onPress={() =>
+        navigation.navigate('Cupboards', {screen: 'ViewCupboards', params: {
+          siteID: site.siteID},
+        })
+      } key={idx} style={{backgroundColor: 'black', height: '80%', width: '40%', margin: 10, alignItems: 'center', justifyContent:'center'}}>
         <Text style={{color: 'white'}}>{site.siteName}</Text>
       </TouchableOpacity>
     ))}

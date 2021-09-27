@@ -19,7 +19,7 @@ export default function ItemsStack() {
         name="ViewItems"
         component={ViewItems}
         options={{
-          headerLeft: () => <AppBarLogout />,
+          headerLeft: () => <AppBarBack />,
           headerBackground: () => <AppBar />,
           headerRight: () => <AppBarAdd navigateTo="UpdateItem" />,
           headerTitleStyle: { display: 'none' },
